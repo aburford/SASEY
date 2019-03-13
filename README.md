@@ -15,3 +15,5 @@ ParameterServer (Andrew)
 Batch (Sohyun)
 * Calculate geometric median
 
+We could consider using this library
+https://deeplearning4j.org
