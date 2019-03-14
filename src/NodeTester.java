@@ -14,7 +14,7 @@ public class NodeTester {
 		
 		//Opens webpage
 		URL prostateData = new URL("https://www.cs.ubc.ca/~nando/340-2012/lectures/prostate.data");
-    BufferedReader in = new BufferedReader(new InputStreamReader(prostateData.openStream()));
+    		BufferedReader in = new BufferedReader(new InputStreamReader(prostateData.openStream()));
 
 		int row = 0;
 		String line;
