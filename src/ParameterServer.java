@@ -5,13 +5,16 @@ import java.util.Random;
 public class ParameterServer {
 	Node[] nodes;
 	int q;
-	int[][][] model;
+	double[][] model;
 
-	public ParameterServer(int numOfNodes, int faultyNodeLB) {
-		nodes = new Node[numOfNodes];
-		while (--numOfNodes >= 0)
-			nodes[numOfNodes] = new Node();
+	public ParameterServer(int faultyNodeLB, int featureLength, int labelLength) {
 		q = faultyNodeLB;
+		model = new double[labelLength][featureLength];
+		// TODO initialize model with random numbers
+	}
+	
+	public void setNodes(Node[] nodes) {
+		this.nodes = nodes;
 	}
 
 	public void nextTimeStep() {
@@ -29,7 +32,7 @@ public class ParameterServer {
 		// mean /= batches.length;
 
 		// update the model based on the average gradient we calculated
-		// backpropagation is hard, maybe use this: https://deeplearning4j.org
+		// 
 
 	}
 
