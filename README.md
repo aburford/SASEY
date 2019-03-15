@@ -1,6 +1,6 @@
 # SASEY
 
-Main (Songyhun)
+Main (Seonghyeon)
 * control timesteps
 * initialize everything
 
@@ -9,7 +9,7 @@ Node (2 people) (Ethan, Yuting)
 * Calculate gradients
 
 ParameterServer (Andrew)
-* take average 
+* take average
 * apply gradient to average of medians
 
 Batch (Sohyun)

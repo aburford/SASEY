@@ -1,32 +1,63 @@
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
-
 public class Main {
+	/* 2(1 + ǫ)q ≤ k ≤ m
+	 *	m = num of working machines(node)
+	 *  q = num of faulty (upto q)
+	 *  ǫ = batch size constant, (ǫ > 0)
+	 */
+	static int numOfNodes;      // m
+	static int faultyNodeLB;    // q
+	//double batchSizeConst = 0;  // ǫ, if required later
 
-	public static void main(String[] args) {
-		// parse out data and allocate to nodes
-		try (Stream<String> stream = Files.lines(Paths.get("data/prostate.data"))) {
-			stream.toArray();
-			// initialize ParameterServer
-			
-			// initialize nodes
-			int numOfNodes = 100;
-			Node[] nodes = new Node[numOfNodes];
-			while (--numOfNodes >= 0)
-				// allocate parsed data into nodes
-				nodes[numOfNodes] = new Node();
-			
-			// server.setNodes(nodes)
-			
-			// loop through time steps with server.nextTimeStep()
-		} catch (IOException e) {
-			System.out.println("working directory should be root of git repo");
-			e.printStackTrace();
-		}
-		
+	static double learningRate;
+
+	// termination conditions (depends on the model we will use?)
+	static int maximumIter;	    // maximum # of iteration allowed
+	static double absTolerance; // most tolerable loss
+
+	// init system params here
+	private static void init() {
+		// all accessible from other classes
+		numOfNodes = 10;
+		faultyNodeLB = 0;
+		learningRate = 0.000001;
+		maximumIter = 100;
+		absTolerance = 0;
 	}
 
+	public static void main(String[] args) {
+		init();
+
+		// initialize parameter server
+		ParameterServer paramServer =
+				new ParameterServer(numOfNodes, faultyNodeLB);
+
+		Tester tester = new Tester();
+		try {
+			tester.loadData();
+		} catch(Exception e) {
+			e.printStackTrace();
+			return;
+		}
+
+		// parse out data and allocate to nodes
+		//@TODO as a function of ParameterServer
+		Node[] nodes = tester.distributeData(numOfNodes);
+		paramServer.setNodes(nodes);
+
+		int steps = 100;
+		tester.singleNodeTest();
+		tester.testBGD(nodes, learningRate, steps);
+	}
+
+
+
+	public static void test(ParameterServer paramServer) {
+
+		for (int round = 0; round < maximumIter; ++round) {
+			/*
+			paramServer.nextTimeStep();
+			paramServer.print();
+			*/
+		}
+	}
 }
