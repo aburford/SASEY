@@ -24,6 +24,8 @@ public class ParameterServer {
 
 		Batch[] batches = generateBatches(batchSize);
 
+		
+		
 		// compute the mean of medians
 		// int[] mean = new int[];
 		// for (Batch b : batches) {
