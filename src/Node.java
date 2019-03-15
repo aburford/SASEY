@@ -1,9 +1,9 @@
 public class Node {
-	
+
 	double[][] labels;
 	double[][] features;
 	boolean faulty;
-	
+
 	/**
 	 * @param labels - should be a column vector (one column, many rows)
 	 * @param features - should be a matrix with the same number of columns as theta has rows
@@ -13,7 +13,7 @@ public class Node {
 		this.features = features;
 		this.faulty = faulty;
 	}
-	
+
 	/**
 	 * Calculates the sum of the squares of the errors in each dimension based on available data
 	 * @param theta - should be a column vector (one column, many rows)
@@ -22,7 +22,7 @@ public class Node {
 	public double loss(double[][] theta) {
 		return dot(add(labels, scale(multiply(features, theta), -1.0)), add(labels, scale(multiply(features, theta), -1.0)));
 	}
-	
+
 	/**
 	 * Calculates gradient of loss function at parameter estimate theta based on available data
 	 * @param theta - should be a column vector (one column, many rows)
@@ -34,7 +34,7 @@ public class Node {
 		}
 		return add(scale(multiply(transpose(features), labels), -2.0), scale(multiply(multiply(transpose(features), features), theta), 2.0));
 	}
-	
+
 	//Testing purposes only
 	public double[][] step(double[][] startTheta, double learningRate, int steps) {
 		double[][] currentTheta = startTheta;
@@ -46,9 +46,9 @@ public class Node {
 		}
 		return currentTheta;
 	}
-	
+
 	//Scales all elements of matrix
-	private static double[][] scale(double[][] mat, double factor) {
+	public static double[][] scale(double[][] mat, double factor) {
 		double[][] out = new double[mat.length][mat[0].length];
 		for(int i = 0; i < mat.length; i++) {
 			for(int j = 0; j < mat[0].length; j++) {
@@ -57,7 +57,7 @@ public class Node {
 		}
 		return out;
 	}
-	
+
 	//Transposes matrix
 	private static double[][] transpose(double[][] mat) {
 		double[][] out = new double[mat[0].length][mat.length];
@@ -68,9 +68,9 @@ public class Node {
 		}
 		return out;
 	}
-	
+
 	//Adds two matrices
-	private static double[][] add(double[][] mat1, double[][] mat2) throws ArithmeticException {
+	public static double[][] add(double[][] mat1, double[][] mat2) throws ArithmeticException {
 		if(mat1.length != mat2.length || mat1[0].length != mat2[0].length) {
 			throw new ArithmeticException("Dimensions do not match");
 		}
@@ -82,7 +82,7 @@ public class Node {
 		}
 		return out;
 	}
-	
+
 	//Matrix multiplication
 	private static double[][] multiply(double[][] mat1, double[][] mat2) {
 		if(mat1[0].length != mat2.length) {
@@ -96,7 +96,7 @@ public class Node {
 		}
 		return out;
 	}
-	
+
 	//Matrix multiplication helper function. Dots one row of left matrix with one column of right matrix
 	private static double weight(double[][] mat1, double[][] mat2, int row, int col) {
 		if(mat1[row].length != mat2.length) {
@@ -108,7 +108,7 @@ public class Node {
 		}
 		return out;
 	}
-		
+
 	//Dots two vectors
 	private static double dot(double[][] mat1, double[][] mat2) {
 		return weight(transpose(mat1), mat2, 0, 0);

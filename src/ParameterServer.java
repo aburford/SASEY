@@ -6,18 +6,24 @@ public class ParameterServer {
 	Node[] nodes;
 	int q;
 	int[][][] model;
+	int m;
 
 	public ParameterServer(int numOfNodes, int faultyNodeLB) {
 		nodes = new Node[numOfNodes];
 		while (--numOfNodes >= 0)
 			nodes[numOfNodes] = new Node();
+		m = numOfNodes;
 		q = faultyNodeLB;
 	}
 
 	public void nextTimeStep() {
 		// "2(1 + ǫ)q ≤ k ≤ m for any arbitrary but fixed constant ǫ > 0"
 		// so I'm not sure if this is right:
-		int batchSize = 2 * q;
+
+		//int batchSize = 2 * q;
+		// batchSize = m / k,
+		// have to make sure if k = 2*q works later
+		int batchSize = m / (2 * q);
 
 		Batch[] batches = generateBatches(batchSize);
 
@@ -31,6 +37,14 @@ public class ParameterServer {
 		// update the model based on the average gradient we calculated
 		// backpropagation is hard, maybe use this: https://deeplearning4j.org
 
+	}
+
+	public Node[] getNodes() {
+		return nodes;
+	}
+
+	public void setNodes(Node[] nodes) {
+		this.nodes = nodes;
 	}
 
 	private Batch[] generateBatches(int batchSize) {
