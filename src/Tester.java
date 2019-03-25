@@ -29,24 +29,30 @@ public class Tester {
     }
 
     /**
-     * Tests BGD-like consensus. Uses mean of estimated parameters instead of gradients.
-     * @TODO use gradient, not estimated param
+     * Tests Batch Gradient Descent.
      */
     public void testBGD(Node[] nodes, double learningRate, int iter) {
+    	// features * theta == labels
     	double[][] serverParam = getRandomParam();	//parameter @ParameterServer
 
     	for (int round = 0; round < iter; ++round) {
-    		System.out.println("@Round" + (round + 1) + "  loss = " + nodes[0].loss(serverParam));
-	    	double[][] paramSum = new double[8][1]; //for mean calculation
-	    	for (int i = 0; i < nodes.length; ++i) {
-	    		paramSum =
-	    				Node.add(paramSum, nodes[i].step(serverParam, learningRate, 1));
-	    	}
-	    	serverParam = Node.scale(paramSum, nodes.length); //update with mean of result
-    	}
+            System.out.println("===============================================================");
+            System.out.println("@Round" + (round + 1));
+            double[][] gradientSum = new double[8][1]; //for mean calculation
+
+            for (int i = 0; i < nodes.length; ++i) {
+                gradientSum = Node.add(gradientSum, nodes[i].gradient(serverParam));
+                System.out.println("[Node " + (i + 1) + "] cost = " + nodes[i].loss(serverParam));
+            }
+            gradientSum = Node.scale(gradientSum, nodes.length); //get mean of gradients
+            serverParam = Node.add(serverParam, Node.scale(gradientSum, -learningRate));
+            System.out.println("===============================================================");
+        }
     }
 
-    //@TODO add setters in Node and make more readable
+    /**
+     * Distribute features and labels into nodes.
+     */
     public Node[] distributeData(int numOfNodes) {
         Node[] nodes = new Node[numOfNodes];
 
@@ -56,13 +62,13 @@ public class Tester {
         for (int i = 0; i < nodes.length - 1; ++i) {
             nodes[i] = new Node(
                     Arrays.copyOfRange(labels, (dataPerNode * i), dataPerNode * (i + 1)),
-                    features,
+                    Arrays.copyOfRange(features, (dataPerNode * i), dataPerNode * (i + 1)),
                     false );
         }
         // last node gets the rest
         nodes[nodes.length - 1] = new Node(
                 Arrays.copyOfRange(labels, dataPerNode * (nodes.length - 1), labels.length),
-                features,
+                Arrays.copyOfRange(features, dataPerNode * (nodes.length - 1), features.length),
                 false );
 
         return nodes;
