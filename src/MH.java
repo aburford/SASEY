@@ -70,6 +70,14 @@ public class MH {
 		return weight(transpose(mat1), mat2, 0, 0);
 	}
 	
+	public static double distance(double[][] p1, double[][] p2) {
+		double total = 0.0;
+		for(int i = 0; i < p1.length; i++) {
+			total += Math.pow(p1[i][0] - p2[i][0], 2);
+		}
+		return Math.sqrt(total);
+	}
+	
 	public static double[][] listToMatrix(List<ArrayList<Double>> mat) {
 		if(mat.size() > 0 && mat.get(0).size() > 0) {
 			double[][] out = new double[mat.size()][mat.get(0).size()];
