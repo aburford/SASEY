@@ -6,12 +6,34 @@ public class Batch {
 		this.nodes = (Node[]) nodes.toArray();
 	}
 	
-	public double[][] getGeometricMedian(double[][] model){
-		// TODO calculate geometric median
-		for (Node n : nodes) {
-			n.gradient(model);
+	//Iterates Weiszfeld's algorithm until the change in distance is less than minChange
+	public double[][] getGeometricMedian(double minChange, double[][] parameterEstimate) {
+		double[][] lastMedian;
+		double[][] currentMedian = new double[parameterEstimate.length][1];
+		for(int i = 0; i < nodes.length; i++) {
+			currentMedian = Node.add(currentMedian, nodes[i].gradient(parameterEstimate));
 		}
-		return new double[][]{{0}};
+		currentMedian = Node.scale(currentMedian, 1.0 / nodes.length);
+		do {
+			lastMedian = currentMedian.clone();
+			currentMedian = step(currentMedian, parameterEstimate);
+		} while(distance(lastMedian, currentMedian) > minChange);
+		return currentMedian;
+	}
+	
+	//One step of Weiszfeld
+	private double[][] step(double[][] startPosition, double[][] parameterEstimate) {
+		double weightSum = 0.0;
+		double[][] weightedTotal = new double[nodes.length][1];
+		double weight = 0.0;
+		double[][] grad;
+		for(int i = 0; i < nodes.length; i++) {
+			grad = nodes[i].gradient(parameterEstimate);
+			weight = 1.0 / distance(startPosition, grad);
+			weightSum += weight;
+			weightedTotal = Node.add(weightedTotal, Node.scale(grad, weight));
+		}
+		return Node.scale(weightedTotal, 1.0 / weightSum);
 	}
 	
 	public double totalLoss(double[][] model) {
