@@ -6,7 +6,19 @@ public class Batch {
 		this.nodes = (Node[]) nodes.toArray();
 	}
 	
-	public double[] getGeometricMedian(){
-		return new double[]{0};
+	public double[][] getGeometricMedian(double[][] model){
+		// TODO calculate geometric median
+		for (Node n : nodes) {
+			n.gradient(model);
+		}
+		return new double[][]{{0}};
+	}
+	
+	public double totalLoss(double[][] model) {
+		double totalLoss = 0;
+		for (Node n : nodes) {
+			totalLoss += n.loss(model);
+		}
+		return totalLoss;
 	}
 }

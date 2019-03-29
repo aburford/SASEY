@@ -7,48 +7,46 @@ public class ParameterServer {
 	int q;
 	double[][] model;
 	int m;
+	double learningRate;
 
-	public ParameterServer(int faultyNodeLB, int featureLength, int labelLength) {
+	public ParameterServer(int faultyNodeLB, int featureLength, int labelLength, double learningRate, Node[] nodes) {
 		q = faultyNodeLB;
+		this.learningRate = learningRate;
 		model = new double[labelLength][featureLength];
-		// TODO initialize model with random numbers
+		this.nodes = nodes;
+		// Picks a random starting parameter estimate
+		while (featureLength-- > 0) {
+			while (labelLength-- > 0) {
+				// between -50 and 50
+				model[featureLength][labelLength] = 100.0 * (Math.random() - 0.5);	
+			}
+		}
 	}
 	
-	public void setNodes(Node[] nodes) {
-		this.nodes = nodes;
-	}
-
-	public void nextTimeStep() {
+	// return the average loss after this time step
+	public double nextTimeStep() {
 		// "2(1 + ǫ)q ≤ k ≤ m for any arbitrary but fixed constant ǫ > 0"
 		// so I'm not sure if this is right:
 
-		//int batchSize = 2 * q;
+		// int batchSize = 2 * q;
 		// batchSize = m / k,
 		// have to make sure if k = 2*q works later
 		int batchSize = m / (2 * q);
 
 		Batch[] batches = generateBatches(batchSize);
 
-		
-		
 		// compute the mean of medians
-		// int[] mean = new int[];
-		// for (Batch b : batches) {
-		// mean += b.getGeometricMedian();
-		// }
-		// mean /= batches.length;
+		double[][] meanGradient = new double[model.length][model[0].length];
+		double totalLoss = 0;
+		for (Batch b : batches) {
+            meanGradient = MH.add(meanGradient, b.getGeometricMedian(model));
+            totalLoss += b.totalLoss(model);
+        }
+		meanGradient = MH.scale(meanGradient, 1 / batches.length);
 
 		// update the model based on the average gradient we calculated
-		// 
-
-	}
-
-	public Node[] getNodes() {
-		return nodes;
-	}
-
-	public void setNodes(Node[] nodes) {
-		this.nodes = nodes;
+		model = MH.add(model, MH.scale(meanGradient, -learningRate));
+		return totalLoss / nodes.length;
 	}
 
 	private Batch[] generateBatches(int batchSize) {

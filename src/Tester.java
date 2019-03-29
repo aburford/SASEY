@@ -55,7 +55,6 @@ public class Tester {
      */
     public Node[] distributeData(int numOfNodes) {
         Node[] nodes = new Node[numOfNodes];
-
         //evenly distributed (last node gets k data, k <= dataPerNode)
         int dataPerNode = labels.length / nodes.length + 1;
         //distribute upto (m-1)th node
