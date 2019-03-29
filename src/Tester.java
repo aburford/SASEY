@@ -41,11 +41,11 @@ public class Tester {
             double[][] gradientSum = new double[8][1]; //for mean calculation
 
             for (int i = 0; i < nodes.length; ++i) {
-                gradientSum = Node.add(gradientSum, nodes[i].gradient(serverParam));
+                gradientSum = MH.add(gradientSum, nodes[i].gradient(serverParam));
                 System.out.println("[Node " + (i + 1) + "] cost = " + nodes[i].loss(serverParam));
             }
-            gradientSum = Node.scale(gradientSum, nodes.length); //get mean of gradients
-            serverParam = Node.add(serverParam, Node.scale(gradientSum, -learningRate));
+            gradientSum = MH.scale(gradientSum, nodes.length); //get mean of gradients
+            serverParam = MH.add(serverParam, MH.scale(gradientSum, -learningRate));
             System.out.println("===============================================================");
         }
     }
