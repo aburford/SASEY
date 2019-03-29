@@ -17,7 +17,7 @@ public class Batch {
 		do {
 			lastMedian = currentMedian.clone();
 			currentMedian = step(currentMedian, parameterEstimate);
-		} while(distance(lastMedian, currentMedian) > minChange);
+		} while(MH.distance(lastMedian, currentMedian) > minChange);
 		return currentMedian;
 	}
 	
@@ -29,7 +29,7 @@ public class Batch {
 		double[][] grad;
 		for(int i = 0; i < nodes.length; i++) {
 			grad = nodes[i].gradient(parameterEstimate);
-			weight = 1.0 / distance(startPosition, grad);
+			weight = 1.0 / MH.distance(startPosition, grad);
 			weightSum += weight;
 			weightedTotal = MH.add(weightedTotal, MH.scale(grad, weight));
 		}
