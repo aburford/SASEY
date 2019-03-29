@@ -11,9 +11,9 @@ public class Batch {
 		double[][] lastMedian;
 		double[][] currentMedian = new double[parameterEstimate.length][1];
 		for(int i = 0; i < nodes.length; i++) {
-			currentMedian = Node.add(currentMedian, nodes[i].gradient(parameterEstimate));
+			currentMedian = MH.add(currentMedian, nodes[i].gradient(parameterEstimate));
 		}
-		currentMedian = Node.scale(currentMedian, 1.0 / nodes.length);
+		currentMedian = MH.scale(currentMedian, 1.0 / nodes.length);
 		do {
 			lastMedian = currentMedian.clone();
 			currentMedian = step(currentMedian, parameterEstimate);
@@ -31,9 +31,9 @@ public class Batch {
 			grad = nodes[i].gradient(parameterEstimate);
 			weight = 1.0 / distance(startPosition, grad);
 			weightSum += weight;
-			weightedTotal = Node.add(weightedTotal, Node.scale(grad, weight));
+			weightedTotal = MH.add(weightedTotal, MH.scale(grad, weight));
 		}
-		return Node.scale(weightedTotal, 1.0 / weightSum);
+		return MH.scale(weightedTotal, 1.0 / weightSum);
 	}
 	
 	public double totalLoss(double[][] model) {
