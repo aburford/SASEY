@@ -20,7 +20,10 @@ public class Node {
 	 * @return sum of squared error (scalar)
 	 */
 	public double loss(double[][] theta) {
-		return dot(add(labels, scale(multiply(features, theta), -1.0)), add(labels, scale(multiply(features, theta), -1.0)));
+		double[][] modelPrediction = multiply(features, theta);//Model's prediction of the label vector
+		double[][] errorVector = add(labels, scale(modelPrediction, -1.0));//The real label vector minus the model's prediction
+		//Dotting the error vector with itself corresponds to adding up the squares of the errors in each dimension
+		return dot(errorVector, errorVector);
 	}
 
 	/**
