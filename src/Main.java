@@ -27,7 +27,8 @@ public class Main {
         // all accessible from other classes
         numOfNodes = 10;
         faultyNodeLB = 0;
-        learningRate = 0.0000001;
+//        learningRate = 0.0000001;
+        learningRate = 0.001;
         maximumIter = 18000;
         absTolerance = 0;
     }
@@ -44,6 +45,7 @@ public class Main {
 		String line;
 		try {
 			// open webpage
+			System.out.println("Loading data...");
 			prostateData = new URL("https://www.cs.ubc.ca/~nando/340-2012/lectures/prostate.data");
 			in = new BufferedReader(new InputStreamReader(prostateData.openStream()));
 			while((line = in.readLine()) != null) {
@@ -78,6 +80,7 @@ public class Main {
 		double[][] features = MH.listToMatrix(featuresList);
 		
 		// DISTRIBUTE DATA
+		System.out.println("Distributing data...");
 		Node[] nodes = new Node[numOfNodes];
         //evenly distributed (last node gets k data, k <= dataPerNode)
         int dataPerNode = labels.length / nodes.length + 1;
@@ -97,11 +100,11 @@ public class Main {
         
         // INITIALIZE PARAMETER SERVER
         // ParameterServer(int faultyNodeLB, int featureLength, int labelLength, double learningRate, Node[] nodes) {
-        ParameterServer paramServer = new ParameterServer(faultyNodeLB, labels[0].length, features[0].length, learningRate, nodes);
+        ParameterServer paramServer = new ParameterServer(faultyNodeLB, features[0].length, labels[0].length, learningRate, nodes);
 
         // ITERATE TIMESTEPS
         for (int i = 0; i < maximumIter; i++) {
-        	System.out.println("Total loss: " + paramServer.nextTimeStep());
+        	System.out.print("\rAverage loss: " + paramServer.nextTimeStep());
         }
     }
 }

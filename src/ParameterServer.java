@@ -12,7 +12,7 @@ public class ParameterServer {
 	public ParameterServer(int faultyNodeLB, int featureLength, int labelLength, double learningRate, Node[] nodes) {
 		q = faultyNodeLB;
 		this.learningRate = learningRate;
-		model = new double[labelLength][featureLength];
+		model = new double[featureLength][labelLength];
 		this.nodes = nodes;
 		// Picks a random starting parameter estimate
 		while (featureLength-- > 0) {
@@ -31,22 +31,23 @@ public class ParameterServer {
 		// int batchSize = 2 * q;
 		// batchSize = m / k,
 		// have to make sure if k = 2*q works later
-		int batchSize = m / (2 * q);
+		int batchSize = q == 0 ? nodes.length : m / (2 * q);
 
 		Batch[] batches = generateBatches(batchSize);
 
 		// compute the mean of medians
 		double[][] meanGradient = new double[model.length][model[0].length];
-		double totalLoss = 0;
+		double avgLoss = 0;
 		for (Batch b : batches) {
-            meanGradient = MH.add(meanGradient, b.getGeometricMedian(model));
-            totalLoss += b.totalLoss(model);
+            meanGradient = MH.add(meanGradient, b.getGeometricMedian(10, model));
+            avgLoss += b.totalLoss(model);
         }
 		meanGradient = MH.scale(meanGradient, 1 / batches.length);
 
 		// update the model based on the average gradient we calculated
 		model = MH.add(model, MH.scale(meanGradient, -learningRate));
-		return totalLoss / nodes.length;
+		avgLoss /= nodes.length;
+		return avgLoss;
 	}
 
 	private Batch[] generateBatches(int batchSize) {
