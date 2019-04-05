@@ -29,21 +29,37 @@ public class Batch {
 		return currentMedian;
 	}
 	
-	//One step of Weiszfeld
-	private double[][] step(double[][] startPosition, double[][] parameterEstimate) {
-		double weightSum = 0.0;
-//		double[][] weightedTotal = new double[nodes.length][1];
-//		parameterEstimate.length will equal length of the gradient
-		double[][] weightedTotal = new double[parameterEstimate.length][1];
-		double weight = 0.0;
+	//One step of modified Weizfeld algorithm
+	private double[][] step(double[][] y, double[][] parameterEstimate) {
+		boolean flag = false;
+		int index = -1;
 		double[][] grad;
 		for(int i = 0; i < nodes.length; i++) {
 			grad = nodes[i].gradient(parameterEstimate);
-			weight = 1.0 / MH.distance(startPosition, grad);
-			weightSum += weight;
-			weightedTotal = MH.add(weightedTotal, MH.scale(grad, weight));
+			for(int j = 0; j < y.length; j++) {
+				if(y[j][0] != grad[j][0]) {
+					flag = true;
+					index = i;
+					break;
+				}
+			}
 		}
-		return MH.scale(weightedTotal, 1.0 / weightSum);
+		double[][] R = new double[parameterEstimate.length][1];
+		double weightSum = 0.0;
+		double[][] weightedTotal = new double[parameterEstimate.length][1];
+		double weight = 0.0;
+		for(int i = 0; i < nodes.length; i++) {
+			if(!flag || index != i) {
+				grad = nodes[i].gradient(parameterEstimate);
+				weight = 1.0 / distance(y, grad);
+				weightSum += weight;
+				weightedTotal = MH.add(weightedTotal, MH.scale(grad, weight));
+				R = MH.add(R, MH.scale(MH.add(grad, MH.scale(y, -1.0)), 1.0 / weight));
+			}
+		}
+		double[][] tofY = MH.scale(weightedTotal, 1.0 / weightSum);
+		double rofY = Math.sqrt(MH.dot(R, R));
+		return MH.add(MH.scale(tofY, Math.abs(1 - 1.0 / rofY)), MH.scale(y, Math.min(1, 1.0 / rofY)));
 	}
 	
 	public double totalLoss(double[][] model) {
