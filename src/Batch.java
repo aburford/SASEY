@@ -37,7 +37,7 @@ public class Batch {
 		for(int i = 0; i < nodes.length; i++) {
 			grad = nodes[i].gradient(parameterEstimate);
 			for(int j = 0; j < y.length; j++) {
-				if(y[j][0] != grad[j][0]) {
+				if(y[j][0] == grad[j][0]) {
 					flag = true;
 					index = i;
 					break;
