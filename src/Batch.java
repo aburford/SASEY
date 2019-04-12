@@ -49,7 +49,7 @@ public class Batch {
 		for(int i = 0; i < nodes.length; i++) {
 			if(!flag || index != i) {
 				grad = nodes[i].gradient(parameterEstimate);
-				weight = 1.0 / distance(y, grad);
+				weight = 1.0 / MH.distance(y, grad);
 				weightSum += weight;
 				weightedTotal = MH.add(weightedTotal, MH.scale(grad, weight));
 				R = MH.add(R, MH.scale(MH.add(grad, MH.scale(y, -1.0)), 1.0 / weight));

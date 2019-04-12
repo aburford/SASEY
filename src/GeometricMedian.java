@@ -81,19 +81,52 @@ public class GeometricMedian extends Application {
 	}
 
 	// One step of Weiszfeld
-	private double[][] step(double[][] startPosition) {
-		double weightSum = 0.0;
-		double[][] weightedTotal = new double[2][1];
-		double weight = 0.0;
-		double[][] vector;
-		for (Circle c : points) {
-			vector = new double[][]{{c.getCenterX()},{c.getCenterY()}};
-			weight = 1.0 / MH.distance(startPosition, vector);
-			weightSum += weight;
-			weightedTotal = MH.add(weightedTotal, MH.scale(vector, weight));
+//	private double[][] step(double[][] startPosition) {
+//		double weightSum = 0.0;
+//		double[][] weightedTotal = new double[2][1];
+//		double weight = 0.0;
+//		double[][] vector;
+//		for (Circle c : points) {
+//			vector = new double[][]{{c.getCenterX()},{c.getCenterY()}};
+//			weight = 1.0 / MH.distance(startPosition, vector);
+//			weightSum += weight;
+//			weightedTotal = MH.add(weightedTotal, MH.scale(vector, weight));
+//		}
+//		return MH.scale(weightedTotal, 1.0 / weightSum);
+//	}
+	
+	//One step of modified Weizfeld algorithm
+		private double[][] step(double[][] y) {
+			boolean flag = false;
+			int index = -1;
+			double[][] vector;
+			for(int i = 0; i < points.size(); i++) {
+				vector = new double[][]{{points.get(i).getCenterX()},{points.get(i).getCenterY()}};
+				for(int j = 0; j < y.length; j++) {
+					if(y[j][0] == vector[j][0]) {
+						flag = true;
+						index = i;
+						break;
+					}
+				}
+			}
+			double[][] R = new double[2][1];
+			double weightSum = 0.0;
+			double[][] weightedTotal = new double[2][1];
+			double weight = 0.0;
+			for(int i = 0; i < points.size(); i++) {
+				if(!flag || index != i) {
+					vector = new double[][]{{points.get(i).getCenterX()},{points.get(i).getCenterY()}};
+					weight = 1.0 / MH.distance(y, vector);
+					weightSum += weight;
+					weightedTotal = MH.add(weightedTotal, MH.scale(vector, weight));
+					R = MH.add(R, MH.scale(MH.add(vector, MH.scale(y, -1.0)), 1.0 / weight));
+				}
+			}
+			double[][] tofY = MH.scale(weightedTotal, 1.0 / weightSum);
+			double rofY = Math.sqrt(MH.dot(R, R));
+			return MH.add(MH.scale(tofY, Math.abs(1 - 1.0 / rofY)), MH.scale(y, Math.min(1, 1.0 / rofY)));
 		}
-		return MH.scale(weightedTotal, 1.0 / weightSum);
-	}
 
 	public static void main(String[] args) {
 		launch(args);
