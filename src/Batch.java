@@ -17,23 +17,19 @@ public class Batch {
 			currentMedian = MH.add(currentMedian, nodes[i].gradient(parameterEstimate));
 		}
 		currentMedian = MH.scale(currentMedian, 1.0 / nodes.length);
-		System.out.print("Starting geometric median calculation...\t");
+//		System.out.print("Starting geometric median calculation...\t");
 		do {
 			lastMedian = currentMedian.clone();
 			currentMedian = step(currentMedian, parameterEstimate);
-			System.out.println("Geometric median error:" + MH.distance(lastMedian, currentMedian));
-			System.out.println("Geometric median minChange" + minChange);
-			System.out.printf("Geometric median continue:%b", MH.distance(lastMedian, currentMedian) > minChange);
+//			System.out.println("Geometric median error:" + MH.distance(lastMedian, currentMedian));
 		} while(MH.distance(lastMedian, currentMedian) > minChange);
-		System.out.println("finished");
+//		System.out.println("finished");
 		return currentMedian;
 	}
 	
 	//One step of Weiszfeld
 	private double[][] step(double[][] startPosition, double[][] parameterEstimate) {
 		double weightSum = 0.0;
-//		double[][] weightedTotal = new double[nodes.length][1];
-//		parameterEstimate.length will equal length of the gradient
 		double[][] weightedTotal = new double[parameterEstimate.length][1];
 		double weight = 0.0;
 		double[][] grad;

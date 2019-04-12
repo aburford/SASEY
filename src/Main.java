@@ -27,8 +27,8 @@ public class Main {
         // all accessible from other classes
         numOfNodes = 10;
         faultyNodeLB = 0;
-//        learningRate = 0.0000001;
-        learningRate = 0.001;
+//        learningRate = 0.00001;
+        learningRate = 0.0000001;
         maximumIter = 18000;
         absTolerance = 0;
     }
@@ -103,8 +103,15 @@ public class Main {
         ParameterServer paramServer = new ParameterServer(faultyNodeLB, features[0].length, labels[0].length, learningRate, nodes);
 
         // ITERATE TIMESTEPS
-        for (int i = 0; i < maximumIter; i++) {
-        	System.out.print("\rAverage loss: " + paramServer.nextTimeStep());
+//        for (int i = 0; i < maximumIter; i++) {
+//        	System.out.print("\rAverage loss: " + paramServer.nextTimeStep());
+//        }
+        int i = 0;
+        while(true) {
+        	if (i++ % 1000 == 0)
+        		System.out.print("\rAverage loss: " + paramServer.nextTimeStep());
+        	else
+        		paramServer.nextTimeStep();
         }
     }
 }
